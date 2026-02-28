@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  /* Mr Oso Brand Colors */
+  --color-primary: #C41E24;
+  --color-primary-dark: #8B0000;
+  --color-primary-light: #E53935;
+  --color-secondary: #1A1A1A;
+  --color-accent: #E53935;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-muted: #9CA3AF;
+
+  /* Dark Theme */
+  --color-dark: #0D0D0D;
+  --color-dark-light: #1A1A1A;
+  --color-background: #111111;
+  --color-card: #1E1E1E;
+  --color-card-light: #2A2A2A;
+  --color-border: #2E2E2E;
+  --color-border-light: #3A3A3A;
+
+  /* Turno Status */
+  --color-received: #F59E0B;
+  --color-received-bg: rgba(245, 158, 11, 0.15);
+  --color-inprocess: #C41E24;
+  --color-inprocess-bg: rgba(196, 30, 36, 0.15);
+  --color-ready: #10B981;
+  --color-ready-bg: rgba(16, 185, 129, 0.15);
+  --color-delivered: #6B7280;
+  --color-delivered-bg: rgba(107, 114, 128, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  background-color: #111111;
+  color: #FFFFFF;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1A1A1A;
+}
+::-webkit-scrollbar-thumb {
+  background: #3A3A3A;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C41E24;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(196, 30, 36, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(196, 30, 36, 0.5); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.2s; opacity: 0; }
+.delay-3 { animation-delay: 0.3s; opacity: 0; }
+.delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+/* Noise texture overlay for login */
+.noise-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
