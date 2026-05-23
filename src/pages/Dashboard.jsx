@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   DollarSign,
   Car,
@@ -6,7 +7,9 @@ import {
   TrendingUp,
   MoreVertical,
   ChevronRight,
+  Sparkles,
 } from 'lucide-react';
+import InsightsModal from '../components/InsightsModal';
 import {
   BarChart,
   Bar,
@@ -99,18 +102,63 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const [aiOpen, setAiOpen] = useState(false);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', fontFamily: ff }} className="animate-fadeIn">
       {/* Header */}
-      <div>
-        <h1 style={{ fontSize: '36px', fontWeight: 700, color: '#ffffff', margin: 0, fontFamily: ff }}>
-          Dashboard Principal
-        </h1>
-        <p style={{ fontSize: '16px', color: '#9ca3af', margin: '6px 0 0 0' }}>
-          Resumen general de operaciones y métricas del día.
-        </p>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <h1 style={{ fontSize: '36px', fontWeight: 700, color: '#ffffff', margin: 0, fontFamily: ff }}>
+            Dashboard Principal
+          </h1>
+          <p style={{ fontSize: '16px', color: '#9ca3af', margin: '6px 0 0 0' }}>
+            Resumen general de operaciones y métricas del día.
+          </p>
+        </div>
+        <button
+          onClick={() => setAiOpen(true)}
+          className="ai-pulse"
+          style={{
+            position: 'relative',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 9,
+            padding: '12px 20px',
+            background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
+            border: 'none',
+            borderRadius: 12,
+            color: '#fff',
+            fontSize: 14,
+            fontWeight: 700,
+            letterSpacing: '0.02em',
+            cursor: 'pointer',
+            boxShadow: '0 10px 30px rgba(220,38,38,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+            fontFamily: ff,
+            transition: 'transform 0.15s, box-shadow 0.15s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 14px 36px rgba(220,38,38,0.5), inset 0 1px 0 rgba(255,255,255,0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 10px 30px rgba(220,38,38,0.35), inset 0 1px 0 rgba(255,255,255,0.15)';
+          }}
+        >
+          <Sparkles size={17} />
+          Insights con IA
+        </button>
       </div>
+
+      <InsightsModal open={aiOpen} onClose={() => setAiOpen(false)} />
+      <style>{`
+        @keyframes aiPulse {
+          0%, 100% { box-shadow: 0 10px 30px rgba(220,38,38,0.35), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 0 0 rgba(220,38,38,0.5); }
+          50%      { box-shadow: 0 10px 30px rgba(220,38,38,0.35), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 0 10px rgba(220,38,38,0); }
+        }
+        .ai-pulse { animation: aiPulse 2.4s ease-out infinite; }
+      `}</style>
 
       {/* Stats Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }} className="stats-grid">
