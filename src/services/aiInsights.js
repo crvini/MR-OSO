@@ -174,7 +174,7 @@ const DEMO_INITIAL = {
 
 const DEMO_GENERIC = {
   reply:
-    'Estás en Modo Demo (0 tokens). Para hacer preguntas libres, desactiva el modo demo y asegúrate de tener tu Anthropic API key en .env.',
+    'Estás en Modo Demo. Para hacer preguntas libres, desactiva el modo demo y asegúrate de que la API key de IA esté configurada.',
   preguntasSugeridas: [
     '¿Cómo subir el ticket promedio del sábado?',
     '¿Vale la pena reactivar Lavado de Motor?',

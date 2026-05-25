@@ -49,7 +49,7 @@ export default function InsightsModal({ open, onClose }) {
     } catch (e) {
       if (e.code === 'no_api_key') {
         setError(
-          'Falta tu Anthropic API key. Copia .env.example a .env y pégala ahí. O activa Modo Demo para ver el resultado sin gastar tokens.',
+          'Falta configurar la API key de IA en el servidor. Activa Modo Demo para ver el resultado sin consumirla.',
         );
       } else {
         setError(e.message || 'Error generando análisis');
@@ -92,7 +92,7 @@ export default function InsightsModal({ open, onClose }) {
     } catch (e) {
       if (e.code === 'no_api_key') {
         setError(
-          'Falta tu Anthropic API key para chat libre. Pégala en .env o activa Modo Demo.',
+          'Falta configurar la API key de IA para chat libre. Activa Modo Demo o pídele al admin que la configure.',
         );
       } else {
         setError(e.message || 'Error procesando la pregunta');
@@ -110,7 +110,7 @@ export default function InsightsModal({ open, onClose }) {
       : source === 'cache'
         ? { icon: Sparkles, label: 'Cache local', color: '#10B981' }
         : source === 'api'
-          ? { icon: Bot, label: 'Claude Haiku', color: '#dc2626' }
+          ? { icon: Bot, label: 'IA en vivo', color: '#dc2626' }
           : null;
 
   return (
