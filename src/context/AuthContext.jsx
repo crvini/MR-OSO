@@ -1,9 +1,29 @@
-import { createContext, useContext, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AuthContext } from './auth-context';
 
-const AuthContext = createContext(null);
+const KEY = 'mroso_sesion';
+
+const leerSesion = () => {
+  try {
+    return JSON.parse(localStorage.getItem(KEY) || 'null');
+  } catch {
+    return null;
+  }
+};
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  // Se guarda la sesion para que recargar la pagina no saque al usuario
+  // en medio de una demostracion.
+  const [user, setUser] = useState(leerSesion);
+
+  useEffect(() => {
+    try {
+      if (user) localStorage.setItem(KEY, JSON.stringify(user));
+      else localStorage.removeItem(KEY);
+    } catch {
+      /* ignore */
+    }
+  }, [user]);
 
   const login = (username) => {
     setUser({
@@ -23,5 +43,3 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
-export const useAuth = () => useContext(AuthContext);

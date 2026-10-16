@@ -32,6 +32,7 @@ import {
   ranking,
   tiposVehiculo,
 } from '../data/sucursales';
+import { useDemoData } from '../context/useDemoData';
 
 const ff = "'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif";
 
@@ -41,15 +42,6 @@ const card = {
   border: '1px solid #2e2e2e',
   padding: '22px',
 };
-
-const colaEspera = [
-  { cliente: 'Cristopher De León', vehiculo: 'Toyota Hilux', placa: 'P-245-KBR', tipo: 'Carro', servicio: 'Lavado Premium', entrada: '08:15', estado: 'PENDIENTE', suc: 'centro' },
-  { cliente: 'María Fernanda López', vehiculo: 'Honda CR-V', placa: 'P-112-MFL', tipo: 'Carro', servicio: 'Lavado Completo', entrada: '08:30', estado: 'EN FILA', suc: 'roosevelt' },
-  { cliente: 'Gabriela Estrada', vehiculo: 'Chevrolet Tracker', placa: 'P-345-GEM', tipo: 'Carro', servicio: 'Lavado Completo', entrada: '09:00', estado: 'PENDIENTE', suc: 'zona10' },
-  { cliente: 'Ana Lucía Morales', vehiculo: 'Kia Sportage', placa: 'P-789-ALM', tipo: 'Carro', servicio: 'Paquete VIP', entrada: '09:10', estado: 'EN FILA', suc: 'villanueva' },
-  { cliente: 'Diego Vásquez', vehiculo: 'Mitsubishi L200', placa: 'M-223-DAV', tipo: 'Camión', servicio: 'Detailing Interior', entrada: '09:25', estado: 'PENDIENTE', suc: 'roosevelt' },
-  { cliente: 'Luis Argueta', vehiculo: 'Honda CB190', placa: 'M-908-LAR', tipo: 'Moto', servicio: 'Lavado Básico', entrada: '09:40', estado: 'EN FILA', suc: 'mixco' },
-];
 
 const iconoTipo = { Carros: Car, Motos: Bike, Camiones: Truck };
 
@@ -71,6 +63,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function Dashboard() {
   const [suc, setSuc] = useState('todas');
+  const { turnos, capturadoHoy } = useDemoData();
 
   const r = resumen(suc);
   const semana = ingresosSemana(suc);
@@ -82,10 +75,15 @@ export default function Dashboard() {
     ? 'las 5 sucursales'
     : sucursales.find((s) => s.id === suc)?.nombre;
 
+  // Lo cobrado en esta sesión se suma a la base simulada
+  const ingresosHoy = r.ingresos + capturadoHoy.ingresos;
+  const vehiculosHoy = r.vehiculos + capturadoHoy.vehiculos;
+  const enVivo = capturadoHoy.vehiculos > 0;
+
   const stats = [
-    { label: 'Ingresos Hoy', value: `Q ${r.ingresos.toLocaleString()}`, sub: 'viernes', icon: DollarSign, color: '#10B981' },
-    { label: 'Vehículos Hoy', value: String(r.vehiculos), sub: 'atendidos', icon: Car, color: '#dc2626' },
-    { label: 'Ticket Promedio', value: `Q ${r.ticketPromedio}`, sub: 'por vehículo', icon: Receipt, color: '#F59E0B' },
+    { label: 'Ingresos Hoy', value: `Q ${ingresosHoy.toLocaleString()}`, sub: enVivo ? `incluye Q ${capturadoHoy.ingresos.toFixed(2)} cobrados ahora` : 'viernes', icon: DollarSign, color: '#10B981' },
+    { label: 'Vehículos Hoy', value: String(vehiculosHoy), sub: enVivo ? `${capturadoHoy.vehiculos} capturado(s) en vivo` : 'atendidos', icon: Car, color: '#dc2626' },
+    { label: 'Ticket Promedio', value: `Q ${Math.round(ingresosHoy / Math.max(1, vehiculosHoy))}`, sub: 'por vehículo', icon: Receipt, color: '#F59E0B' },
     { label: 'Hora Pico', value: r.horaPico, sub: `más floja: ${r.horaValle}`, icon: Clock, color: '#3B82F6' },
   ];
 
@@ -371,9 +369,21 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {colaEspera
-                .filter((v) => suc === 'todas' || v.suc === suc)
-                .map((v, i) => (
+              {turnos
+                .filter((t) => t.estado !== 'entregado')
+                .filter((t) => suc === 'todas' || (t.sucursal || 'centro') === suc)
+                .map((t, i) => {
+                  const v = {
+                    cliente: t.cliente,
+                    vehiculo: [t.marca, t.modelo].filter(Boolean).join(' ') || '—',
+                    placa: t.placa,
+                    tipo: t.tipo || 'Carro',
+                    suc: t.sucursal || 'centro',
+                    servicio: t.servicio,
+                    entrada: t.horaIngreso,
+                    estado: t.estado === 'listo' ? 'LISTO' : t.estado === 'en_proceso' ? 'EN PROCESO' : 'PENDIENTE',
+                  };
+                  return (
                   <tr key={v.placa} style={{ backgroundColor: i % 2 === 0 ? '#1a1a1a' : '#151515', borderBottom: '1px solid #1e1e1e' }}>
                     <td style={{ padding: '14px 16px', fontSize: 15, fontWeight: 600, color: '#fff' }}>{v.cliente}</td>
                     <td style={{ padding: '14px 16px' }}>
@@ -390,9 +400,11 @@ export default function Dashboard() {
                       <span style={{
                         display: 'inline-block', fontSize: 11, fontWeight: 700,
                         padding: '4px 12px', borderRadius: 6,
-                        ...(v.estado === 'PENDIENTE'
-                          ? { backgroundColor: 'rgba(220,38,38,0.15)', color: '#dc2626' }
-                          : { backgroundColor: 'rgba(245,158,11,0.15)', color: '#F59E0B' }),
+                        ...(v.estado === 'LISTO'
+                          ? { backgroundColor: 'rgba(16,185,129,0.15)', color: '#10B981' }
+                          : v.estado === 'EN PROCESO'
+                            ? { backgroundColor: 'rgba(245,158,11,0.15)', color: '#F59E0B' }
+                            : { backgroundColor: 'rgba(220,38,38,0.15)', color: '#dc2626' }),
                       }}>
                         {v.estado}
                       </span>
@@ -403,7 +415,8 @@ export default function Dashboard() {
                       </button>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
             </tbody>
           </table>
         </div>

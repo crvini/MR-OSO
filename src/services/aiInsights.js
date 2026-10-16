@@ -8,7 +8,6 @@
 import {
   transaccionesHoy,
   ingresosSemana,
-  ultimosServicios,
   servicios,
   clientes,
 } from '../data/mockData';
@@ -245,7 +244,7 @@ async function callChat({ messages, metricas }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages, metricas }),
     });
-  } catch (netErr) {
+  } catch {
     const e = new Error(
       'No se pudo conectar al backend (puerto 3001). ¿Está corriendo `npm run dev:all`?',
     );

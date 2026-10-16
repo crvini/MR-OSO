@@ -85,7 +85,9 @@ export function heatmap(sucursalId = 'todas') {
       const v = ids.reduce((a, id) => a + DATA[id].celdas[dia][hora], 0);
       celdas[dia][hora] = v;
       if (v > max) { max = v; celdaMax = { dia, hora, v }; }
-      if (v < min) { min = v; celdaMin = { dia, hora, v }; }
+      // El minimo solo cuenta en horario pleno: apertura y cierre siempre son
+      // bajos y no sirven para decidir descansos.
+      if (hora >= 8 && hora <= 17 && v < min) { min = v; celdaMin = { dia, hora, v }; }
     });
   });
 
